@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = process.env.port;
+const cors = require('cors');
 
 // middelware
 const notFound = require('./middlewares/notFound');
@@ -8,6 +9,10 @@ const handleError = require('./middlewares/handleError');
 
 // routers
 const filmsRouter = require('./routers/movies');
+
+app.use(cors({
+    origin: process.env.FE_APP
+}));
 
 app.use(express.static('public'));
 
