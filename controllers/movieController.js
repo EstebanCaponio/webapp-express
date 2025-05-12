@@ -13,7 +13,7 @@ function index(req, res) {
         res.json(results);
     });
 
-    res.json(results.map(resylt => ({
+    res.json(results.map(result => ({
         ...result,
         imagePath: 'http://127.0.0.1:3000/movies' + result.image
     })))
