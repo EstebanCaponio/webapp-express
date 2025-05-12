@@ -2,7 +2,11 @@ const connection = require('../data/db');
 
 function index(req, res) {
     // res.send('elenco film');
-    const sql = 'SELECT * FROM movies';
+    const sql = `
+    SELECT movies.*, AVG(reviews.vote) as average_vote  
+    FROM movies
+    LEFT JOIN reviews on movies.id = reviews.movie_id
+    GROUP BY movies.ID`;
 
     connection.query(sql, (err, results) => {
         if (err) return res.status(500).json({ error: 'Database query failed' });
