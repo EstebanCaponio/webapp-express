@@ -31,12 +31,38 @@ function show(req, res) {
     // res.send('dettagli film');
     const id = req.params.id
 
-    const sql = 'SELECT * FROM movies WHERE id = ?';
+    // const sql = 'SELECT * FROM movies WHERE id = ?';
+    const sql = `
+    SELECT movies.*, ROUND(AVG(reviews.vote), 2) AS vote_review
+    FROM movies
+    LEFT JOIN reviews ON movies.id = reviews.movie_id
+    WHERE movies.id = ?`;
 
-    connection.query(sql, [id], (err, results) => {
+    const sqlrev = `
+    SELECT reviews.*
+    FROM reviews
+    WHERE movie_id = ?
+    `;
+
+    // connection.query(sql, [id], (err, results) => {
+    //     if (err) return res.status(500).json({ error: 'Database query failed' });
+    //     if (results.length === 0) return res.status(404).json({ error: 'film not found' });
+    //     res.json(results[0]);
+    // });
+
+    connection.query(sql, [id], (err, filmsResults) => {
         if (err) return res.status(500).json({ error: 'Database query failed' });
-        if (results.length === 0) return res.status(404).json({ error: 'film not found' });
-        res.json(results[0]);
+        if (filmsResults.length === 0) return res.status(404).json({ error: 'film non trovato' });
+        const film = filmsResults[0];
+
+        connection.query(sqlrev, [id], (err, reviewsResults) => {
+            if (err) return res.status(500).json({ error: 'Database query failed' });
+            film.tags = reviewsResults;
+            res.json({
+                ...film,
+                image: 'http://127.0.0.1:3000/' + film.image
+            });
+        });
     });
 };
 
