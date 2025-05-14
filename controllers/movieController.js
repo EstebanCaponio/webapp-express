@@ -36,28 +36,21 @@ function show(req, res) {
     SELECT movies.*, ROUND(AVG(reviews.vote), 2) AS vote_review
     FROM movies
     LEFT JOIN reviews ON movies.id = reviews.movie_id
-    WHERE movies.id = ?`;
+	where movies.id = ?`;
 
     const sqlrev = `
     SELECT reviews.*
     FROM reviews
-    WHERE movie_id = ?
-    `;
-
-    // connection.query(sql, [id], (err, results) => {
-    //     if (err) return res.status(500).json({ error: 'Database query failed' });
-    //     if (results.length === 0) return res.status(404).json({ error: 'film not found' });
-    //     res.json(results[0]);
-    // });
+    WHERE movie_id = ?`;
 
     connection.query(sql, [id], (err, filmsResults) => {
         if (err) return res.status(500).json({ error: 'Database query failed' });
         if (filmsResults.length === 0) return res.status(404).json({ error: 'film non trovato' });
         const film = filmsResults[0];
 
-        connection.query(sqlrev, [id], (err, reviewsResults) => {
+        connection.query(sqlrev, [id], (err, reviews) => {
             if (err) return res.status(500).json({ error: 'Database query failed' });
-            film.tags = reviewsResults;
+            film.reviews = reviews;
             res.json({
                 ...film,
                 image: 'http://127.0.0.1:3000/' + film.image
@@ -66,7 +59,21 @@ function show(req, res) {
     });
 };
 
+function store(req, res) {
+    //identificativo del film
+    const { id } = req.params;
+
+    //corpo della richiesta
+    console.log(req.body);
+
+    const squl =
+        // aggiungere query vedere lezione;
+
+        res.send(`Ho aggiunto una nuova recensione per il film ${id}`);
+}
+
 module.exports = {
     index,
-    show
+    show,
+    store
 };
