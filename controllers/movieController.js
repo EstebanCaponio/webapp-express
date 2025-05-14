@@ -31,7 +31,6 @@ function show(req, res) {
     // res.send('dettagli film');
     const id = req.params.id
 
-    // const sql = 'SELECT * FROM movies WHERE id = ?';
     const sql = `
     SELECT movies.*, ROUND(AVG(reviews.vote), 2) AS vote_review
     FROM movies
@@ -66,10 +65,17 @@ function store(req, res) {
     //corpo della richiesta
     console.log(req.body);
 
-    const squl =
-        // aggiungere query vedere lezione;
+    const { name, vote, text } = req.body;
 
-        res.send(`Ho aggiunto una nuova recensione per il film ${id}`);
+    const squl = `INSERT INTO reviews (movie_id, name, vote, text)
+    VALUES(?, ?, ?, ?)`;
+
+    connection.query(squl, [id, name, vote, text], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Database query failed' });
+    })
+
+    res.status(201);
+    res.json({ message: "review created successfully" })
 }
 
 module.exports = {
