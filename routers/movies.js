@@ -9,4 +9,6 @@ router.get('/:id', movieController.show);
 
 router.post('/:id/reviews', movieController.store);
 
+router.post('/', movieController.storeAdd);
+
 module.exports = router;

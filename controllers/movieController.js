@@ -67,10 +67,10 @@ function store(req, res) {
 
     const { name, vote, text } = req.body;
 
-    const squl = `INSERT INTO reviews (movie_id, name, vote, text)
+    const sql = `INSERT INTO reviews (movie_id, name, vote, text)
     VALUES(?, ?, ?, ?)`;
 
-    connection.query(squl, [id, name, vote, text], (err, results) => {
+    connection.query(sql, [id, name, vote, text], (err, results) => {
         if (err) return res.status(500).json({ error: 'Database query failed' });
     })
 
@@ -78,8 +78,25 @@ function store(req, res) {
     res.json({ message: "review created successfully" })
 }
 
+function storeAdd(req, res) {
+    // res.send('aggiunta libro');
+
+    const { title, director, abstract } = req.body;
+
+    const sql = `INSERT INTO movies (title, director, abstract)
+    VALUES(?, ?, ?)`;
+
+    connection.query(sql, [title, director, abstract], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Database query failed' });
+    })
+
+    res.status(201);
+    res.json({ message: "film added successfully" })
+}
+
 module.exports = {
     index,
     show,
-    store
+    store,
+    storeAdd
 };
